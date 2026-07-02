@@ -37,7 +37,18 @@ uv run uvicorn app.main:app --reload
 
 The app validates required environment variables (`APP_ENV`, `DATABASE_URL`, `REDIS_URL`) at
 startup via `backend/app/core/config.py` — it will refuse to boot rather than run with a missing
-value.
+value. `DATABASE_URL` must use the `postgresql+asyncpg://` scheme (async SQLAlchemy + Alembic).
+
+## Backend: database migrations
+
+Schema is defined with SQLAlchemy models (`backend/app/models/`) and versioned with Alembic.
+
+```bash
+cd backend
+uv run alembic upgrade head              # apply all migrations
+uv run alembic revision --autogenerate -m "describe change"   # generate a new migration
+uv run alembic downgrade -1              # roll back one migration
+```
 
 ## Backend: linting & formatting
 

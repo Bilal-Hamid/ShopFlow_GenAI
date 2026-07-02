@@ -4,8 +4,11 @@ version = "0.1.0"
 description = "ShopFlow backend API (FastAPI)"
 requires-python = ">=3.14"
 dependencies = [
+    "alembic==1.18.4",
+    "asyncpg>=0.30.0",
     "fastapi>=0.138.2",
     "pydantic-settings>=2.14.2",
+    "sqlalchemy>=2.0.36",
     "uvicorn[standard]>=0.49.0",
 ]
 
