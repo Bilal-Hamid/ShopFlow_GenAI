@@ -112,10 +112,7 @@ Desktop.ini
 
 .idea/
 *.iml
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/launch.json
+.vscode/
 
 *.swp
 *.swo
