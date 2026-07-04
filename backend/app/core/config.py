@@ -25,5 +25,22 @@ class Settings(BaseSettings):
     database_url: str = Field(min_length=1)
     redis_url: str = Field(min_length=1)
 
+    # Auth / JWT. jwt_secret_key has no default on purpose (security-critical):
+    # a missing value must fail fast at import time rather than boot with a
+    # predictable secret. Use a long random value (>=32 chars) in every env.
+    jwt_secret_key: str = Field(min_length=16)
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 7
+
+    # Auth cookies. Keep secure=True everywhere except plain-HTTP local dev.
+    cookie_secure: bool = True
+    cookie_samesite: Literal["lax", "strict", "none"] = "lax"
+    cookie_domain: str | None = None
+
+    # Rate limiting (per minute).
+    rate_limit_public_per_minute: int = 100
+    rate_limit_authenticated_per_minute: int = 1000
+
 
 settings = Settings()
