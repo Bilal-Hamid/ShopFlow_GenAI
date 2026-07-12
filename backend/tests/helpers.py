@@ -18,10 +18,20 @@ from app.db.session import AsyncSessionLocal
 from app.main import app
 from app.models.category import Category
 from app.models.coupon import Coupon, DiscountType
+from app.models.order import Order, OrderStatus
+from app.models.order_item import OrderItem
 from app.models.product import Product, ProductStatus
 from app.models.user import User, UserRole
 
 DEFAULT_PASSWORD = "abcd1234"
+
+_ADDRESS = {
+    "full_name": "Test Buyer",
+    "line1": "1 Test Way",
+    "city": "Testville",
+    "postal_code": "00000",
+    "country": "US",
+}
 
 
 async def make_user(email: str, role: UserRole, password: str = DEFAULT_PASSWORD) -> User:
@@ -89,6 +99,41 @@ async def make_coupon(
         await session.commit()
         await session.refresh(coupon)
         return coupon
+
+
+async def make_order(
+    *,
+    customer_id: uuid.UUID,
+    lines: list[tuple[Product, int]],
+    status: OrderStatus = OrderStatus.DELIVERED,
+) -> Order:
+    """Insert an order + items directly (bypassing checkout) for analytics tests.
+
+    ``unit_price`` snapshots each product's current price; ``total_amount`` is
+    the plain line-total sum (no coupon).
+    """
+    async with AsyncSessionLocal() as session:
+        total = sum((p.price * q for p, q in lines), Decimal("0.00"))
+        order = Order(
+            customer_id=customer_id,
+            status=status,
+            total_amount=total,
+            shipping_address=_ADDRESS,
+        )
+        session.add(order)
+        await session.flush()
+        for product, qty in lines:
+            session.add(
+                OrderItem(
+                    order_id=order.id,
+                    product_id=product.id,
+                    quantity=qty,
+                    unit_price=product.price,
+                )
+            )
+        await session.commit()
+        await session.refresh(order)
+        return order
 
 
 @asynccontextmanager

@@ -192,9 +192,16 @@ def _visible_orders(user: User) -> Select[tuple[Order]]:
 
 
 async def list_orders(
-    db: AsyncSession, *, user: User, cursor: str | None, limit: int
+    db: AsyncSession,
+    *,
+    user: User,
+    cursor: str | None,
+    limit: int,
+    status: OrderStatus | None = None,
 ) -> tuple[list[OrderResponse], str | None]:
     stmt = _visible_orders(user)
+    if status is not None:
+        stmt = stmt.where(Order.status == status)
 
     if cursor is not None:
         try:
