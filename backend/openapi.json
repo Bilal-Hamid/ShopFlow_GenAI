@@ -1642,6 +1642,620 @@
         }
       }
     },
+    "/merchant/dashboard": {
+      "get": {
+        "tags": [
+          "merchant"
+        ],
+        "summary": "Merchant dashboard: revenue windows, orders by status, top products, low stock",
+        "operationId": "dashboard_merchant_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDashboard"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a merchant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/products": {
+      "get": {
+        "tags": [
+          "merchant"
+        ],
+        "summary": "List the merchant's own products, all statuses (cursor-paginated)",
+        "operationId": "list_products_merchant_products_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ProductStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ProductResponse_"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a merchant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/orders": {
+      "get": {
+        "tags": [
+          "merchant"
+        ],
+        "summary": "List orders containing the merchant's products (cursor-paginated)",
+        "operationId": "list_orders_merchant_orders_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/OrderStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_OrderResponse_"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a merchant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/revenue-summary": {
+      "get": {
+        "tags": [
+          "merchant"
+        ],
+        "summary": "Merchant revenue summary (delivered orders only)",
+        "operationId": "revenue_summary_merchant_revenue_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevenueSummary"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a merchant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List users (cursor-paginated, newest first)",
+        "operationId": "list_users_admin_users_get",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/UserRole"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Role"
+            }
+          },
+          {
+            "name": "include_deleted",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Deleted"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AdminUserResponse_"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not an admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{user_id}": {
+      "patch": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Update a user (email/password/role/active) \u2014 recovery flow",
+        "operationId": "update_user_admin_users__user_id__patch",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Cannot demote/deactivate self",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email in use or last-admin conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/orders": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "List all orders across the platform (cursor-paginated)",
+        "operationId": "list_orders_admin_orders_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/OrderStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_OrderResponse_"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not an admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/platform-stats": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Platform-wide statistics (users, products, orders, revenue)",
+        "operationId": "platform_stats_admin_platform_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformStats"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not an admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -1670,6 +2284,102 @@
   },
   "components": {
     "schemas": {
+      "AdminUserResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "deleted_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deleted At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "role",
+          "created_at",
+          "deleted_at"
+        ],
+        "title": "AdminUserResponse"
+      },
+      "AdminUserUpdate": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "title": "AdminUserUpdate",
+        "description": "PATCH \u2014 every field optional; at least one must be provided.\n\n``is_active`` toggles the soft-delete state: ``False`` deactivates (sets\n``deleted_at``), ``True`` reactivates (clears it)."
+      },
       "CartItemAdd": {
         "properties": {
           "product_id": {
@@ -1830,6 +2540,71 @@
         ],
         "title": "LoginRequest"
       },
+      "LowStockProduct": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "stock_qty": {
+            "type": "integer",
+            "title": "Stock Qty"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "title",
+          "stock_qty"
+        ],
+        "title": "LowStockProduct"
+      },
+      "MerchantDashboard": {
+        "properties": {
+          "revenue": {
+            "$ref": "#/components/schemas/RevenueWindows"
+          },
+          "orders_by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Orders By Status"
+          },
+          "top_products": {
+            "items": {
+              "$ref": "#/components/schemas/TopProduct"
+            },
+            "type": "array",
+            "title": "Top Products"
+          },
+          "low_stock": {
+            "items": {
+              "$ref": "#/components/schemas/LowStockProduct"
+            },
+            "type": "array",
+            "title": "Low Stock"
+          },
+          "product_count": {
+            "type": "integer",
+            "title": "Product Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "revenue",
+          "orders_by_status",
+          "top_products",
+          "low_stock",
+          "product_count"
+        ],
+        "title": "MerchantDashboard"
+      },
       "OrderItemResponse": {
         "properties": {
           "id": {
@@ -1938,6 +2713,33 @@
         ],
         "title": "OrderStatusUpdate"
       },
+      "Page_AdminUserResponse_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminUserResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextcursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[AdminUserResponse]"
+      },
       "Page_OrderResponse_": {
         "properties": {
           "items": {
@@ -2018,6 +2820,63 @@
           "items"
         ],
         "title": "Page[ReviewResponse]"
+      },
+      "PlatformStats": {
+        "properties": {
+          "total_users": {
+            "type": "integer",
+            "title": "Total Users"
+          },
+          "users_by_role": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Users By Role"
+          },
+          "total_products": {
+            "type": "integer",
+            "title": "Total Products"
+          },
+          "products_by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Products By Status"
+          },
+          "total_orders": {
+            "type": "integer",
+            "title": "Total Orders"
+          },
+          "orders_by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Orders By Status"
+          },
+          "total_revenue": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Revenue"
+          },
+          "revenue": {
+            "$ref": "#/components/schemas/RevenueWindows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_users",
+          "users_by_role",
+          "total_products",
+          "products_by_status",
+          "total_orders",
+          "orders_by_status",
+          "total_revenue",
+          "revenue"
+        ],
+        "title": "PlatformStats"
       },
       "ProblemDetail": {
         "properties": {
@@ -2353,6 +3212,68 @@
         ],
         "title": "RegisterRequest"
       },
+      "RevenueSummary": {
+        "properties": {
+          "total_revenue": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Revenue"
+          },
+          "delivered_order_count": {
+            "type": "integer",
+            "title": "Delivered Order Count"
+          },
+          "average_order_value": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Average Order Value"
+          },
+          "revenue": {
+            "$ref": "#/components/schemas/RevenueWindows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_revenue",
+          "delivered_order_count",
+          "average_order_value",
+          "revenue"
+        ],
+        "title": "RevenueSummary"
+      },
+      "RevenueWindows": {
+        "properties": {
+          "last_7_days": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Last 7 Days"
+          },
+          "last_30_days": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Last 30 Days"
+          },
+          "last_90_days": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Last 90 Days"
+          },
+          "all_time": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "All Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "last_7_days",
+          "last_30_days",
+          "last_90_days",
+          "all_time"
+        ],
+        "title": "RevenueWindows",
+        "description": "Revenue rolled up over trailing time windows plus an all-time total."
+      },
       "ReviewCreate": {
         "properties": {
           "rating": {
@@ -2526,6 +3447,36 @@
           "country"
         ],
         "title": "ShippingAddress"
+      },
+      "TopProduct": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Product Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "units_sold": {
+            "type": "integer",
+            "title": "Units Sold"
+          },
+          "revenue": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Revenue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "title",
+          "units_sold",
+          "revenue"
+        ],
+        "title": "TopProduct"
       },
       "TrackingResponse": {
         "properties": {
