@@ -4,7 +4,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.errors import register_exception_handlers
+from app.api.routes.admin import router as admin_router
 from app.api.routes.auth import router as auth_router
+from app.api.routes.cart import router as cart_router
+from app.api.routes.merchant import router as merchant_router
+from app.api.routes.orders import router as orders_router
+from app.api.routes.products import router as products_router
+from app.api.routes.reviews import router as reviews_router
+from app.api.routes.webhooks import router as webhooks_router
 from app.core.config import settings
 from app.db.redis import redis_client
 
@@ -20,6 +27,13 @@ app = FastAPI(title="ShopFlow API", version="0.1.0", lifespan=lifespan)
 
 register_exception_handlers(app)
 app.include_router(auth_router)
+app.include_router(products_router)
+app.include_router(cart_router)
+app.include_router(orders_router)
+app.include_router(reviews_router)
+app.include_router(merchant_router)
+app.include_router(admin_router)
+app.include_router(webhooks_router)
 
 
 @app.get("/health", tags=["health"])

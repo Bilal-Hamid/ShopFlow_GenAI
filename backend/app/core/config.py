@@ -42,5 +42,24 @@ class Settings(BaseSettings):
     rate_limit_public_per_minute: int = 100
     rate_limit_authenticated_per_minute: int = 1000
 
+    # Stripe. Optional (default None) so the app still boots in environments
+    # without payments configured (tests for other modules, frontend-only
+    # deploys); the payment webhook returns a problem response if unset, and
+    # checkout simply skips creating a hosted payment session.
+    # - stripe_secret_key: the API key used to create Checkout Sessions. Prefer
+    #   a restricted key (rk_...) scoped to Checkout Sessions over a raw sk_.
+    # - stripe_webhook_secret: the endpoint's *signing secret* (whsec_...), used
+    #   only to verify inbound webhook signatures — not an API key.
+    stripe_secret_key: str | None = None
+    stripe_webhook_secret: str | None = None
+    # Pinned Stripe API version for outbound calls (dynamic payment methods and
+    # integration_identifier require a recent version).
+    stripe_api_version: str = "2026-06-24.dahlia"
+    # ISO currency for checkout amounts (the schema has no per-order currency).
+    payment_currency: str = "usd"
+    # Where Stripe redirects the customer after a hosted checkout completes or
+    # is cancelled; the order id is appended as a query param.
+    frontend_base_url: str = "http://localhost:3000"
+
 
 settings = Settings()
