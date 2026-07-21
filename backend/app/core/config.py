@@ -28,8 +28,8 @@ class Settings(BaseSettings):
     # Auth / JWT. jwt_secret_key has no default on purpose (security-critical):
     # a missing value must fail fast at import time rather than boot with a
     # predictable secret. Use a long random value (>=32 chars) in every env.
-    jwt_secret_key: str = Field(min_length=16)
-    jwt_algorithm: str = "HS256"
+    jwt_secret_key: str = Field(min_length=32)
+    jwt_algorithm: Literal["HS256", "HS384", "HS512"] = "HS256"
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7
 
