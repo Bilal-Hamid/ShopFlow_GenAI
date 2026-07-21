@@ -15,16 +15,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import CurrentUser, authenticated_rate_limiter, require_roles
 from app.api.pagination import DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, Page
+from app.core.config import settings
 from app.db.session import get_db
 from app.models.user import User, UserRole
 from app.schemas.order import (
     CheckoutRequest,
+    CheckoutResponse,
     OrderResponse,
     OrderStatusUpdate,
     TrackingResponse,
 )
 from app.schemas.problem import ProblemDetail
-from app.services import order_service
+from app.services import order_service, payment_service
 
 router = APIRouter(
     prefix="/orders",
@@ -41,23 +43,33 @@ CustomerUser = Annotated[User, Depends(require_roles(UserRole.CUSTOMER))]
 @router.post(
     "/checkout",
     status_code=201,
-    response_model=OrderResponse,
+    response_model=CheckoutResponse,
     summary="Check out the cart into an order (customer)",
     responses={
         403: {"model": ProblemDetail, "description": "Not a customer"},
         409: {"model": ProblemDetail, "description": "Stock or coupon conflict"},
         422: {"model": ProblemDetail, "description": "Empty cart or invalid coupon"},
+        502: {"model": ProblemDetail, "description": "Payment provider error"},
     },
 )
 async def checkout(
     payload: CheckoutRequest, db: DbSession, customer: CustomerUser
-) -> OrderResponse:
-    return await order_service.checkout(
+) -> CheckoutResponse:
+    order = await order_service.checkout(
         db,
         customer=customer,
         shipping_address=payload.shipping_address,
         coupon_code=payload.coupon_code,
     )
+    # When Stripe is configured, kick off a hosted payment session and hand the
+    # customer its URL; the webhook confirms the order once payment succeeds.
+    # Without Stripe configured the order is still created (payment_url stays None).
+    payment_url = None
+    if settings.stripe_secret_key:
+        payment_url = await payment_service.create_checkout_session(
+            order_id=order.id, amount=order.total_amount
+        )
+    return CheckoutResponse(**order.model_dump(), payment_url=payment_url)
 
 
 @router.get(

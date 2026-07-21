@@ -15,6 +15,7 @@ os.environ.setdefault(
 )
 os.environ.setdefault("REDIS_URL", "redis://localhost:6380/0")
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-0123456789-abcdef")
+os.environ.setdefault("STRIPE_WEBHOOK_SECRET", "whsec_test_secret_0123456789abcdef")
 # Cookies must be sendable over the http test transport.
 os.environ.setdefault("COOKIE_SECURE", "false")
 
