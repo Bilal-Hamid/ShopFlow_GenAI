@@ -50,6 +50,14 @@ class OrderResponse(BaseModel):
     items: list[OrderItemResponse]
 
 
+class CheckoutResponse(OrderResponse):
+    """Checkout returns the created order plus, when Stripe is configured, the
+    URL of the hosted payment page to redirect the customer to. ``payment_url``
+    is None when payments are not configured (the order is still created)."""
+
+    payment_url: str | None = None
+
+
 class OrderStatusUpdate(BaseModel):
     status: OrderStatus
 
