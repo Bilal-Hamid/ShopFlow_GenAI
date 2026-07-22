@@ -3,7 +3,7 @@
 Monorepo for the ShopFlow GenAI upskilling project.
 
 - [`backend/`](backend/) — REST API (Domain 1: Backend Engineering) — **active**
-- `frontend/` — Next.js storefront + merchant admin (Domain 2: Frontend Engineering) — **not yet started**
+- [`frontend/`](frontend/) — Next.js storefront + merchant admin (Domain 2: Frontend Engineering) — **foundation scaffolded**
 
 ## Stack choice: Backend
 
@@ -185,6 +185,76 @@ every commit. Install once from the repo root:
 uv run --project backend pre-commit install
 ```
 
+## Stack choice: Frontend
+
+**Next.js (App Router) + React 19**, **TypeScript** in strict mode
+(`noUncheckedIndexedAccess` on top of `strict`), styled with **Tailwind CSS v3**
+using CSS-variable theming. Server state via **TanStack Query**, client state via
+**Zustand**, forms via **React Hook Form + Zod**. **MSW** for API mocking and
+**Storybook** (`@storybook/nextjs-vite`, with the a11y addon) for the component
+library. Linted with ESLint (flat config) and formatted with Prettier.
+
+### Deviation from the recommended stack
+
+The PRD recommends **Next.js 14**; this project uses the **current stable Next.js
+(16.x)**. Justification: Next 14 is several majors behind and no longer receives
+security patches; the App Router API we depend on is stable across 14→16, so
+staying current avoids shipping a knowingly outdated framework. All other frontend
+choices match the PRD (TypeScript, Tailwind, React Query, Zustand, RHF + Zod).
+Tailwind is pinned to **v3** (not the newer v4) for the widest ecosystem/Storybook
+compatibility. Next.js 16 is a major release — see [`frontend/AGENTS.md`](frontend/AGENTS.md).
+
+## Frontend: local development
+
+Requires Node.js and npm. Run from `frontend/`:
+
+```bash
+cd frontend
+cp .env.example .env.local     # then adjust values (see "Environment variables")
+npm install
+npm run dev                    # http://localhost:3000
+```
+
+The dev server talks to the backend at `NEXT_PUBLIC_API_BASE_URL`
+(default `http://localhost:8000`) — start the backend (Docker or uvicorn) first.
+
+Scripts: `dev`, `build`, `start`, `lint`, `typecheck`, `format`, `format:check`,
+`storybook` (Storybook dev on `:6006`), `build-storybook`.
+
+### Frontend environment variables
+
+Defined in `frontend/.env.local` (git-ignored); `frontend/.env.example` is the
+committed template. Both are `NEXT_PUBLIC_`-prefixed (exposed to the browser).
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | `http://localhost:8000` | Base URL of the backend API. |
+| `NEXT_PUBLIC_API_MOCKING` | _(empty)_ | Set to `enabled` to intercept API calls with MSW. |
+
+### Frontend structure & conventions
+
+```
+frontend/src/
+  app/          App Router: layout, page, providers, globals.css (design tokens)
+  components/    reusable component library (built in a later phase)
+  lib/           query-client, utils (cn)
+  stores/        Zustand stores (cart starter)
+  mocks/         MSW handlers + browser worker + node server + conditional init
+  stories/       Storybook example stories (replaced by real ones later)
+```
+
+- **Theming / dark mode** — colours are CSS custom properties (HSL triplets) in
+  `src/app/globals.css`, mapped to semantic Tailwind tokens
+  (`bg-background`, `text-primary`, …). Dark mode is class-based (`class="dark"`
+  on `<html>`); Storybook has a matching **Theme** toolbar.
+- **API mocking** — MSW is wired but **off by default**; normal dev uses the real
+  backend. Enable with `NEXT_PUBLIC_API_MOCKING=enabled`. Handlers live in
+  `src/mocks/handlers.ts` (currently a stub). Contract stays in sync with the
+  backend by generating TS types from `backend/openapi.json` (planned).
+- **Validation** — backend Pydantic and frontend Zod don't conflict: they
+  validate at different boundaries (server trust boundary vs. client UX). The
+  shared contract is the OpenAPI spec.
+
 ## Known limitations
 
 - **Order tracking is mocked** — `GET /orders/{id}/tracking` returns fabricated carrier / ETA data;
@@ -198,4 +268,8 @@ uv run --project backend pre-commit install
   orders are created but never advance past `pending` (no webhook to confirm them).
 - **Coupons are modeled but not wired into checkout** — the `Coupon` entity exists; discount
   application at checkout is not implemented yet.
-- **Frontend is not started** — `frontend/` is greenfield.
+- **Frontend is foundation-only** — `frontend/` has the scaffold, tooling, and
+  providers wired, but no real components, pages, or API integration yet.
+- **`npm audit` reports transitive advisories** in Next.js's bundled `postcss`
+  and `sharp` (not direct deps). Don't run `npm audit fix --force` — it only
+  suggests downgrading to `next@9`. These clear via a future Next.js patch bump.
