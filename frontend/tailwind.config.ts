@@ -15,6 +15,9 @@ const config: Config = {
     "./src/app/**/*.{ts,tsx,mdx}",
     "./src/components/**/*.{ts,tsx,mdx}",
     "./src/**/*.{ts,tsx,mdx}",
+    // Storybook toggles the `.dark` class here; without scanning this dir
+    // Tailwind purges the `.dark {}` token block from the Storybook build.
+    "./.storybook/**/*.{ts,tsx}",
   ],
   theme: {
     container: {
