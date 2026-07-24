@@ -42,9 +42,12 @@ const preview: Preview = {
       useEffect(() => {
         const root = document.documentElement;
         root.classList.toggle("dark", theme === "dark");
+        // Theme the preview iframe body too, so the area outside the story
+        // wrapper matches the selected theme instead of staying white.
+        document.body.classList.add("bg-background", "text-foreground");
       }, [theme]);
       return (
-        <div className="min-h-24 bg-background p-4 text-foreground">
+        <div className="min-h-screen bg-background p-4 text-foreground">
           <Story />
         </div>
       );

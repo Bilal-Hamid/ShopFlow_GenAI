@@ -21,22 +21,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 221 83% 53%;
+    /* Deepened to meet WCAG AA (>=4.5:1) as both colored text and as fills
+       against the light background. */
+    --primary: 221 83% 47%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
 
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 16% 40%;
 
     --accent: 210 40% 96%;
     --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 74% 42%;
     --destructive-foreground: 210 40% 98%;
 
-    --success: 142 71% 45%;
+    --success: 142 64% 24%;
     --success-foreground: 210 40% 98%;
 
     --warning: 38 92% 50%;
@@ -44,7 +46,7 @@
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --ring: 221 83% 47%;
 
     --radius: 0.5rem;
   }
@@ -71,14 +73,19 @@
     --accent: 217 33% 17%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    /* Dark mode uses a BRIGHT red so `text-destructive` (error text, overdue
+       timer, cancelled badge) is readable on dark; the danger button fill then
+       pairs it with a dark foreground (like primary/success do in dark). */
+    --destructive: 0 91% 71%;
+    --destructive-foreground: 222 47% 11%;
 
-    --success: 142 71% 45%;
-    --success-foreground: 210 40% 98%;
+    --success: 142 69% 58%;
+    --success-foreground: 222 47% 11%;
 
+    /* Amber tint reads dark text in light mode; in dark the "foreground" is
+       used as text/icon on dark surfaces, so it must be a light amber. */
     --warning: 38 92% 50%;
-    --warning-foreground: 222 47% 11%;
+    --warning-foreground: 38 96% 70%;
 
     --border: 217 33% 17%;
     --input: 217 33% 17%;
@@ -96,4 +103,25 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/*
+ * Content styling for the Tiptap RichTextEditor. Tailwind's preflight strips
+ * list markers and heading/paragraph margins, so restore just what the basic
+ * toolbar (bold, italic, lists, links) can produce.
+ */
+.prose-editor p {
+  margin: 0.25rem 0;
+}
+.prose-editor ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.prose-editor ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.prose-editor a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
 }
